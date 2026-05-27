@@ -1,0 +1,24 @@
+# Audio
+librosa==0.10.1
+soundfile==0.12.1
+
+# ML/DL
+torch==2.2.0
+torchaudio==2.2.0
+torchvision==0.17.0
+scikit-learn==1.4.0
+numpy==1.26.4
+pandas==2.2.0
+
+# NLP / BERT
+transformers==4.38.0
+tokenizers==0.15.2
+
+# Visualization
+matplotlib==3.8.3
+seaborn==0.13.2
+umap-learn==0.5.5
+
+# Utilities
+tqdm==4.66.2
+kaggle==1.6.3

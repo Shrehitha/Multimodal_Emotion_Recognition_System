@@ -1,0 +1,6 @@
+*.pt
+*.pth
+data/TESS/
+__pycache__/
+*.pyc
+.DS_Store

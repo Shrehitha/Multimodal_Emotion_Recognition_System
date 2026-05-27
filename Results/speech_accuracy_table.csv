@@ -1,0 +1,8 @@
+Emotion,Precision,Recall,F1-Score,Support
+angry,1.0,1.0,1.0,60
+disgust,1.0,1.0,1.0,60
+fear,1.0,1.0,1.0,60
+happy,0.984,1.0,0.992,60
+neutral,1.0,1.0,1.0,60
+surprise,1.0,0.983,0.992,60
+sad,1.0,1.0,1.0,60
