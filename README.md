@@ -1,303 +1,218 @@
-# Multimodal Emotion Recognition using Speech, Text, and Fusion
+# Multimodal Emotion Recognition System
 
-This project performs **emotion recognition** using:
-
-- Speech-only features
-- Text-only features
-- Multimodal fusion of speech and text
-
-The system is trained and evaluated on the **TESS (Toronto Emotional Speech Set)** dataset.
+> Recognizing emotions from **Speech**, **Text**, and **Multimodal Fusion** using the TESS dataset.
 
 ---
 
-# Emotions Recognized
+## Overview
 
-- angry
-- disgust
-- fear
-- happy
-- neutral
-- surprise
-- sad
+This project implements three emotion recognition pipelines:
 
----
+| Pipeline | Input | Model | Test Accuracy |
+|---|---|---|---|
+| Speech-Only | Audio (.wav) | Log-Mel Spectrogram + BiLSTM | **99.76%** |
+| Text-Only | Transcript | DistilBERT | ~10% |
+| Multimodal Fusion | Audio + Text | BiLSTM + DistilBERT + Concatenation | ~98% |
 
-# Project Overview
-
-The project compares three different emotion recognition pipelines:
-
-| Pipeline | Description |
-|---|---|
-| Speech-Only | Uses acoustic speech features and BiLSTM |
-| Text-Only | Uses DistilBERT on transcripts |
-| Fusion | Combines speech and text representations |
-
-The goal is to analyze how different modalities contribute to emotion recognition performance.
+**Emotions:** `angry` `disgust` `fear` `happy` `neutral` `surprise` `sad`
 
 ---
 
-# Dataset
+## Project Structure
 
-Dataset used:
-- TESS (Toronto Emotional Speech Set)
-
-Download from Kaggle:
-
-https://www.kaggle.com/datasets/ejlok1/toronto-emotional-speech-set-tess
-
-Place extracted dataset inside:
-
-```bash
-data/TESS/
 ```
-
----
-
-# Project Structure
-
-```text
-project/
+emotion_label/
 ├── data/
-│   ├── TESS/
-│   ├── explore.py
-│   └── tess_metadata.csv
-│
+│   ├── explore.py              ← data exploration & metadata generation
+│   └── tess_metadata.csv       ← auto-generated after running explore.py
 ├── models/
 │   ├── speech_pipeline/
-│   │   ├── train.py
-│   │   └── test.py
-│   │
+│   │   ├── train.py            ← train speech-only model
+│   │   └── test.py             ← evaluate speech-only model
 │   ├── text_pipeline/
-│   │   ├── train.py
-│   │   └── test.py
-│   │
+│   │   ├── train.py            ← train text-only model
+│   │   └── test.py             ← evaluate text-only model
 │   └── fusion_pipeline/
-│       ├── train.py
-│       └── test.py
-│
+│       ├── train.py            ← train multimodal fusion model
+│       └── test.py             ← evaluate fusion model
 ├── Results/
-│   ├── plots/
+│   ├── plots/                  ← all generated plots and visualizations
 │   ├── speech_accuracy_table.csv
-│   ├── speech_failures.csv
-│   ├── speech_history.json
-│   ├── text_history.json
-│   └── fusion_history.json
-│
+│   └── speech_failures.csv
+├── report/
+│   └── Multimodal_Emotion_Recognition_Report.docx
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-# Speech Pipeline
+## Setup Instructions
 
-## Architecture
-
-Speech preprocessing:
-- Resampling to 16kHz
-- Silence trimming
-- Padding/truncation
-
-Feature extraction:
-- Log-Mel Spectrograms
-
-Temporal modelling:
-- Bidirectional LSTM (BiLSTM)
-
-Classifier:
-- Fully connected neural network with softmax output
-
-## Generated Outputs
-
-- Training curves
-- Confusion matrix
-- t-SNE visualization
-- Accuracy table
-- Failure analysis
-
----
-
-# Text Pipeline
-
-## Architecture
-
-Text preprocessing:
-- Transcript tokenization
-
-Feature extraction:
-- DistilBERT embeddings
-
-Contextual modelling:
-- Transformer-based encoder
-
-Classifier:
-- Fully connected neural network
-
-## Important Observation
-
-The text-only model performs poorly because TESS transcripts contain isolated neutral words such as:
-
-```text
-door
-page
-chair
-back
-```
-
-These words contain very little semantic emotional information.
-
-Emotion is primarily encoded in speech prosody rather than text semantics.
-
----
-
-# Fusion Pipeline
-
-## Architecture
-
-Fusion combines:
-- Speech embeddings from BiLSTM
-- Text embeddings from DistilBERT
-
-Fusion strategy:
-- Feature concatenation
-
-Classifier:
-- Multi-layer fully connected network
-
----
-
-# Results
-
-| Model | Accuracy |
-|---|---|
-| Speech-Only | 99.76% |
-| Text-Only | ~10% |
-| Fusion | ~98% |
-
----
-
-# Key Observations
-
-- Speech modality significantly outperformed text modality.
-- Emotional information in TESS is primarily encoded in acoustic speech patterns.
-- Text transcripts are emotionally weak because they contain isolated neutral words.
-- Fusion achieved strong performance but did not significantly outperform speech-only classification.
-
----
-
-# Visualizations
-
-Generated plots include:
-
-- Emotion distribution
-- Training curves
-- Confusion matrices
-- t-SNE visualization of learned embeddings
-
-Plots are saved inside:
-
+### 1. Clone the Repository
 ```bash
-Results/plots/
+git clone https://github.com/Shrehitha/Multimodal_Emotion_Recognition_System.git
+cd Multimodal_Emotion_Recognition_System
 ```
 
----
-
-# Installation
-
-Install dependencies:
-
+### 2. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-Additional libraries:
-
+> Recommended: Python 3.9+ and a virtual environment
 ```bash
-pip install transformers datasets sentencepiece accelerate
+python -m venv venv
+source venv/bin/activate        # Mac/Linux
+venv\Scripts\activate           # Windows
+pip install -r requirements.txt
+```
+
+### 3. Download the TESS Dataset
+- Go to: https://www.kaggle.com/datasets/ejlok1/toronto-emotional-speech-set-tess
+- Download and extract the dataset
+- Place it inside the `data/` folder so the structure looks like:
+
+```
+data/
+└── TESS/
+    ├── OAF_angry/
+    ├── OAF_disgust/
+    ├── OAF_Fear/
+    ├── OAF_happy/
+    ├── OAF_neutral/
+    ├── OAF_Pleasant_surprise/
+    ├── OAF_Sad/
+    ├── YAF_angry/
+    ├── YAF_disgust/
+    ├── YAF_fear/
+    ├── YAF_happy/
+    ├── YAF_neutral/
+    ├── YAF_pleasant_surprised/
+    └── YAF_Sad/
 ```
 
 ---
 
-# Usage
+## How to Run
 
-## 1. Explore Dataset
-
+### Step 1: Explore the Dataset
 ```bash
 python data/explore.py
 ```
+This generates:
+- `data/tess_metadata.csv` — metadata file used by all pipelines
+- `Results/plots/data_distribution.png` — class distribution plot
 
 ---
 
-## 2. Train Speech Model
-
+### Step 2: Train the Speech-Only Model
 ```bash
 python models/speech_pipeline/train.py
 ```
+Generates:
+- `models/speech_pipeline/speech_model.pt` — saved model weights
+- `Results/plots/speech_training_curves.png`
+- `Results/plots/speech_confusion_matrix.png`
+- `data/speech_test_split.csv`
 
----
-
-## 3. Evaluate Speech Model
-
+### Step 3: Evaluate the Speech-Only Model
 ```bash
 python models/speech_pipeline/test.py
 ```
+Generates:
+- `Results/plots/speech_test_confusion.png`
+- `Results/plots/speech_tsne.png`
+- `Results/speech_accuracy_table.csv`
+- `Results/speech_failures.csv`
 
 ---
 
-## 4. Train Text Model
-
+### Step 4: Train the Text-Only Model
 ```bash
 python models/text_pipeline/train.py
 ```
+Generates:
+- `models/text_pipeline/text_model.pt`
+- `Results/plots/text_training_curves.png`
+- `Results/plots/text_confusion_matrix.png`
 
----
-
-## 5. Evaluate Text Model
-
+### Step 5: Evaluate the Text-Only Model
 ```bash
 python models/text_pipeline/test.py
 ```
 
 ---
 
-## 6. Train Fusion Model
-
+### Step 6: Train the Fusion Model
 ```bash
 python models/fusion_pipeline/train.py
 ```
+Generates:
+- `models/fusion_pipeline/fusion_model.pt`
+- `Results/plots/fusion_training_curves.png`
+- `Results/plots/fusion_confusion_matrix.png`
 
----
-
-## 7. Evaluate Fusion Model
-
+### Step 7: Evaluate the Fusion Model
 ```bash
 python models/fusion_pipeline/test.py
 ```
 
 ---
 
-# Technologies Used
+## Results Summary
 
-- Python
-- PyTorch
-- Transformers (HuggingFace)
-- Librosa
-- Scikit-learn
-- Matplotlib
-- Seaborn
+### Accuracy Comparison
+
+| Model | Test Accuracy |
+|---|---|
+| Speech-Only (BiLSTM) | **99.76%** |
+| Multimodal Fusion | ~98% |
+| Text-Only (DistilBERT) | ~10% |
+
+### Speech Pipeline — Per Emotion Performance
+
+| Emotion | Precision | Recall | F1-Score |
+|---|---|---|---|
+| Angry | 1.000 | 1.000 | 1.000 |
+| Disgust | 1.000 | 1.000 | 1.000 |
+| Fear | 1.000 | 1.000 | 1.000 |
+| Happy | 0.984 | 1.000 | 0.992 |
+| Neutral | 1.000 | 1.000 | 1.000 |
+| Surprise | 1.000 | 0.983 | 0.992 |
+| Sad | 1.000 | 1.000 | 1.000 |
 
 ---
 
-# Future Improvements
+## Key Findings
 
-- Attention-based fusion
-- Transformer-based speech encoders
-- Real-time emotion recognition
-- Sentence-level multimodal datasets
-- Cross-speaker generalization
+- **Speech dominates** — acoustic prosody (pitch, energy, tempo) is the primary carrier of emotion in TESS
+- **Text fails** — isolated neutral words (door, chair, page) carry no semantic emotional meaning
+- **Fusion ≈ Speech** — adding a weak modality introduces minor noise; fusion didn't outperform speech alone
+- **Hardest pair** — Happy vs. Surprise (similar prosodic patterns); only 1 test error observed
 
 ---
 
-# Author
+## Technologies Used
 
-Shrehitha Sureddy
+| Category | Library |
+|---|---|
+| Deep Learning | PyTorch |
+| NLP | HuggingFace Transformers (DistilBERT) |
+| Audio Processing | Librosa |
+| Data | NumPy, Pandas |
+| Visualization | Matplotlib, Seaborn, Scikit-learn |
+
+---
+
+## Note on Model Weights
+
+Model `.pt` files are not included in this repository due to GitHub's file size limits.
+To reproduce them, run the training scripts in order as described above.
+
+---
+
+## Author
+
+**Shrehitha Sureddy**  
+GitHub: https://github.com/Shrehitha/Multimodal_Emotion_Recognition_System
